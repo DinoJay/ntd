@@ -1,0 +1,107 @@
+circle.leaf {
+  fill-opacity: .5;
+  stroke-width: 1px;
+}
+
+path.child-branch {
+  fill: none;
+  stroke-width: 1.5px;
+  stroke-dasharray: 5, 5;
+  stroke-opacity: .5;
+}
+
+text.leaf {
+  font: 11px sans-serif;
+  text-anchor: middle;
+}
+
+text.leaf.caption {
+  font: 9px sans-serif;
+  font-style: italic;
+}
+svg#genealogic-miniature {
+  position: fixed;
+  top: 10%;
+  right: 10%;
+}
+
+circle.miniature.filled_with_img {
+  stroke: black;
+  stroke-width: 2px;
+}
+.node {
+  cursor: pointer;
+}
+
+.node:hover {
+  stroke: #000;
+  stroke-width: 1.5px;
+}
+
+.node--leaf {
+  fill: white;
+}
+
+.label {
+  font: 11px "Helvetica Neue", Helvetica, Arial, sans-serif;
+  text-anchor: middle;
+  text-shadow: 0 1px 0 #fff, 1px 0 0 #fff, -1px 0 0 #fff, 0 -1px 0 #fff;
+}
+
+.label,
+.node--root,
+.node--leaf {
+  pointer-events: none;
+}
+
+.mesh {
+  fill: none;
+  stroke: #000;
+  stroke-width: .25px;
+}
+
+.start {
+  fill: none;
+  stroke: brown;
+}
+
+.end {
+  fill: none;
+  stroke: steelblue;
+}
+text {
+  font-size: 11px;
+  pointer-events: none;
+}
+
+text.parent {
+  fill: #1f77b4;
+}
+
+circle {
+  fill: #ccc;
+  stroke: #999;
+  pointer-events: all;
+}
+
+circle.parent {
+  fill: #1f77b4;
+  fill-opacity: .1;
+  stroke: steelblue;
+}
+
+circle.parent:hover {
+  stroke: #ff7f0e;
+  stroke-width: .5px;
+}
+
+circle.child {
+  pointer-events: none;
+}
+
+path.child-branch {
+  fill: none;
+  stroke-width: 1.5px;
+  stroke-dasharray: 5, 5;
+  stroke-opacity: .5;
+}
