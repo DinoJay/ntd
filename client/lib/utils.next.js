@@ -1,7 +1,3 @@
-String.prototype.quote = function() {
-  return "'" + this + "'";
-};
-
 function quote(str) {
   return "'" + str + "'";
 }
@@ -12,18 +8,33 @@ function makeAjaxCall(parent, callback) {
   var query = (
     "PREFIX fictu:<http://webprotege.stanford.edu/project/" +
     "pFQcTHFYhJGfU4INaGHqk#> " +
+    "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>" +
     "SELECT * " +
     "WHERE { " +
     "?fce fictu:hasName " + quote(parent.name) + " ." +
     "?fce fictu:hasName ?fceName." +
     "?fce fictu:isParentOf ?child." +
+    "?fce fictu:hasName ?fceName." +
     "?child fictu:hasName ?childName." +
+    "?child fictu:hasSkinColor ?childSkinColor." +
+    "?child fictu:hasHairColor ?childHairColor." +
+    "?child fictu:hasHeight ?childHeight." +
+    "?child fictu:hasGender ?childGender." +
+    "?child fictu:originatesFrom ?childPlanet." +
+    "?childPlanet rdfs:label ?childPlName." +
     "OPTIONAL {" +
     "?fce fictu:hasPartner ?partner." +
     "?partner fictu:hasName ?partnerName." +
+    "?partner fictu:hasSkinColor ?partnerSkinColor." +
+    "?partner fictu:hasHairColor ?partnerHairColor." +
+    "?partner fictu:hasHeight ?partnerHeight." +
+    "?partner fictu:hasGender ?partnerGender." +
+    "?partner fictu:originatesFrom ?partnerPlanet." +
+    "?partnerPlanet rdfs:label ?partnerPlName." +
     "}" +
     "}"
   );
+
   var encodedQuery = encodeURIComponent(query);
 
   $.ajax({
@@ -33,21 +44,35 @@ function makeAjaxCall(parent, callback) {
     async: false,
     success: function(data) {
       var relatedFces = data.results.bindings;
-      //console.log("relatedFces", relatedFces);
+      console.log("relatedFces", relatedFces);
 
       relatedFces.forEach(function(d) {
-        console.log("related FCE partner", d);
-        parent.partner = {
-          name: d.partnerName ? d.partnerName.value : "Unknown"
-        };
+        // console.log("related FCE partner", d);
 
-        if (d.apprenticeName) {
-          if (typeof parent.apprentices === "undefined") {
-            parent.apprentices = [d.apprenticeName.value];
-          } else {
-            parent.apprentices.push(d.apprenticeName.value);
-          }
+        if (d.partnerName) {
+          parent.partner = {
+            name: d.partnerName.value,
+            appearance: {
+              hairColor: d.partnerHairColor.value,
+              height: d.partnerHeight.value,
+              skinColor: d.partnerSkinColor.value
+            },
+            gender: d.partnerGender.value,
+            planet: d.partnerPlName.value
+          };
+        } else {
+          parent.partner = {
+            name: "Unknown",
+            appearance: {
+              hairColor: "Unknown",
+              height: "Unknown",
+              skinColor: "Unknown"
+            },
+            gender: "Unknown",
+            planet: "Unknown"
+          };
         }
+
       });
 
       if (relatedFces.length === 0) {
@@ -56,27 +81,27 @@ function makeAjaxCall(parent, callback) {
       }
 
       relatedFces.forEach(function(d) {
-        console.log("relatedFce", d);
+        // console.log("relatedFce", d);
         var childObj = {
           name: d.childName.value,
           type: "child",
-          children: []
+          children: [],
+          appearance: {
+            hairColor: d.childHairColor.value,
+            height: d.childHeight.value,
+            skinColor: d.childSkinColor.value
+          },
+            gender: d.childGender.value,
+            planet: d.childPlName.value
         };
-        // TODO
-        //if (d.apprentice) {
-        //var apprObj = {
-        //name: d.apprenticeName.value,
-        //type: "apprentice",
-        //};
-        //parent.children.push(apprObj);
-        //}
+
         parent.children.push(childObj);
         makeAjaxCall(childObj, callback);
       });
     },
     error: function(xhr, ajaxOptions, thrownError) {
-      alert(xhr.status);
-      alert(thrownError);
+      console.log(xhr.status);
+      console.log(thrownError);
     }
   });
 }
@@ -87,8 +112,9 @@ function ajaxWrapper(fceName, callback) {
     name: fceName,
     children: []
   };
+
   makeAjaxCall(parent, function(data) {
-    console.log("leave reached", data);
+    // console.log("leave reached", data);
   });
 
   setTimeout(function() {
